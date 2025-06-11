@@ -1,0 +1,61 @@
+version: "3.8"
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: reverse-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - gitea
+      - kanboard
+      - woodpecker-server
+
+  gitea:
+    image: gitea/gitea:latest
+    container_name: gitea
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+    volumes:
+      - ./gitea/data:/data
+    ports:
+      - "3000:3000"   # Web UI
+      - "2222:22"     # SSH for Git
+
+  kanboard:
+    image: kanboard/kanboard:latest
+    container_name: kanboard
+    volumes:
+      - ./kanboard/data:/var/www/app/data
+    expose:
+      - "80"
+
+  woodpecker-server:
+    image: woodpeckerci/woodpecker-server:latest
+    container_name: woodpecker-server
+    environment:
+      WOODPECKER_OPEN: "true"
+      WOODPECKER_HOST: "http://ci.local"
+      WOODPECKER_DATABASE_DRIVER: "sqlite3"
+      WOODPECKER_DATABASE_DATASOURCE: "/var/lib/woodpecker/woodpecker.sqlite"
+      WOODPECKER_GITEA: "true"
+      WOODPECKER_GITEA_URL: "http://gitea:3000"
+      WOODPECKER_GITEA_CLIENT: "76e73213-8ea3-4851-a34a-172a1b149304"
+      WOODPECKER_GITEA_SECRET: "gto_mhcxbz4tpdfzzrilgqd62ldkty474l3qg3qqcpedpryuuudz5pqa"
+      WOODPECKER_GITEA_SKIP_VERIFY: "true"
+    volumes:
+      - ./woodpecker/data:/var/lib/woodpecker
+    expose:
+      - "8000"
+
+
+  woodpecker-agent:
+    image: woodpeckerci/woodpecker-agent:latest
+    container_name: woodpecker-agent
+    depends_on:
+      - woodpecker-server
+    environment:
+      - WOODPECKER_SERVER=http://woodpecker-server:8000
+
