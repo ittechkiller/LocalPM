@@ -1,1 +1,3 @@
-gitea/data/**/*
+gitea/data/git/**/*
+gitea/data/gitea/**/*
+gitea/data/ssh/**/*
