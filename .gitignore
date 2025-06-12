@@ -1,3 +1,5 @@
 gitea/data/git/**/*
 gitea/data/gitea/**/*
 gitea/data/ssh/**/*
+backup/data/**/*
+backup/logs/**/*
