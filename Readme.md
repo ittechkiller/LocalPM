@@ -266,3 +266,9 @@ Add this line to run it every hour:
 ```
 0 * * * * /home/tech/PM/backup/backup.sh >> /home/tech/PM/backup/logs/cron.log 2>&1
 ```
+
+### ✅ Restore Guide
+To restore:
+```
+tar -xzf gitea_backup_20250610-0230.tar.gz -C ./gitea/data
+```
