@@ -272,3 +272,24 @@ To restore:
 ```
 tar -xzf gitea_backup_20250610-0230.tar.gz -C ./gitea/data
 ```
+
+### Shared Folder Permission
+##### 1. Check Folder Permissions
+Run this command to see permissions:
+```
+ls -ld /home/shared/PM/backup
+```
+If the owner is root or group vboxsf, your user might not have write access.
+
+##### 2. Make Sure Your User Can Write to the Shared Folder
+If it's a VirtualBox shared folder:
+```
+sudo usermod -aG vboxsf $USER
+```
+Then logout and login again (or reboot) to apply the group membership.
+
+Now, recheck:
+```
+groups $USER
+```
+You should see vboxsf in the list.
